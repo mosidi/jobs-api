@@ -155,4 +155,3 @@ This project leverages FastAPI's efficiency and Python's power to create a robus
 
 Through this recruitment assignment, we demonstrated the capability to plan, implement, test, and deploy a sophisticated web API using modern development practices and tools.
 
-new changes some other
