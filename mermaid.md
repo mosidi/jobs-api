@@ -154,3 +154,5 @@ graph TD
 This project leverages FastAPI's efficiency and Python's power to create a robust, scalable job posting API. With comprehensive features from user management to job application processes, integrated authentication, thorough testing, and a streamlined CI/CD pipeline, this API is ready to power any job board platform.
 
 Through this recruitment assignment, we demonstrated the capability to plan, implement, test, and deploy a sophisticated web API using modern development practices and tools.
+
+new changes
