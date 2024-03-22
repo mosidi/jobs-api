@@ -56,8 +56,8 @@ Follow these instructions to get the Job Posting API up and running on your loca
 1. **Clone the Repository**
 
 ```bash
-git clone https://yourrepositorylink.git
-cd Job-Posting-API
+git clone https://github.com/mosidi/jobs-api/.git
+cd job-api
 ```
 
 2. **Environment Setup**
