@@ -2,10 +2,10 @@ name: Build and Deploy BackendApp to ECS
 
 on:
   push:
-    paths:
-      - "jobs-api/**"
-    branches:
-      - master
+    branches: 
+      # Push events on main branch
+      - master 
+
 
 env:
   # Setting an environment variable with the value of a configuration variable
