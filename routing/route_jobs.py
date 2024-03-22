@@ -1,6 +1,9 @@
 from typing import List
 
-from .route_login import get_current_user_from_token
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from core.security import get_current_user_from_token
 from db.models.users import User
 from db.operations.jobs import (
     create_new_job,
@@ -10,45 +13,54 @@ from db.operations.jobs import (
     update_job_by_id,
 )
 from db.session import get_db
-from fastapi import APIRouter, Depends, HTTPException, status
 from schemas.jobs import JobCreate, ShowJob
-from sqlalchemy.orm import Session
 
 job_router = APIRouter()
 
 
-@job_router.post("/create/", summary="Create job", response_model=ShowJob)
+@job_router.post(
+    "/create/",
+    summary="Create job",
+    response_model=ShowJob,
+    description="Allows authorized users to create new job listings. Provide the job title, company name, location, and description.\
+          The creation date is automatically set to the current date. This endpoint requires authentication.",
+)
 def create_job(
     job: JobCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user_from_token),
 ):
     """
-    A function to create a new job by the current user.
-    Parameters:
-        job (JobCreate): The details of the job to be created.
-        db (Session): The database session.
-        current_user (User): The current user creating the job.
+    Internal API Documentation:
+    - Endpoint: POST /create/
+    - Purpose: Create a new job listing in the database.
+    - Auth Required: Yes, a valid JWT token must be provided to identify the current user.
+    - Input: `JobCreate` model with mandatory fields for title, company, location, and description.
+    - Output: `ShowJob` model including the job details with the `job_date_posted` field automatically set to the current date.
+    - Error Handling: Implement error handling for unauthorized access, invalid model inputs, and database operation failures.
 
-    Returns:
-        The newly created job.
+    Note: This function interacts with the database to create a new job record. Ensure proper session management and error handling for a seamless operation.
     """
     user_id = current_user.id
     job = create_new_job(job=job, db=db, job_owner_id=user_id)
     return job
 
 
-@job_router.get("/get/{id}/", summary="Get job", response_model=ShowJob)
+@job_router.get(
+    "/get/{id}/",
+    summary="Get job",
+    response_model=ShowJob,
+    description="Retrieves the details of a job by its unique identifier (ID).\
+          This action requires no authentication and is available to all users.",
+)
 def read_job(id: int, db: Session = Depends(get_db)):
     """
-    Get a job by its ID.
-
-    Parameters:
-        id (int): The ID of the job to retrieve.
-        db (Session, optional): The database session. Defaults to the result of the `get_db` dependency.
-
-    Returns:
-        ShowJob: The retrieved job.
+    Internal API Documentation:
+    - **Endpoint**: GET /get/{id}/
+    - **Purpose**: Retrieve a specific job from the database using its ID.
+    - **Auth Required**: No.
+    - **Input**: Job ID as path parameter.
+    - **Output**: `ShowJob` model instance of the job.
 
     Raises:
         HTTPException: If the job with the specified ID does not exist.
@@ -62,16 +74,33 @@ def read_job(id: int, db: Session = Depends(get_db)):
     return job
 
 
-@job_router.get("/all/", summary="Get all jobs", response_model=List[ShowJob])
+@job_router.get(
+    "/all/",
+    summary="Get all jobs",
+    response_model=List[ShowJob],
+    description="Fetches a list of all job listings. \
+        This endpoint does not require authentication\
+              and is open to all users.",
+)
 def read_jobs(db: Session = Depends(get_db)):
     """
-    A description of the entire function, its parameters, and its return types.
+    Internal API Documentation:
+    - Endpoint: GET /all/
+    - Purpose: Retrieve all job listings from the database.
+    - Auth Required: No.
+    - Output: A list of `ShowJob` model instances.
+
+    This function queries the database for all job records and returns them.
     """
     jobs = list_jobs(db=db)
     return jobs
 
 
-@job_router.put("/update/{id}/", summary="Update job")
+@job_router.put(
+    "/update/{id}/",
+    summary="Update job",
+    description="Updates an existing job listing with new details. This endpoint requires the user to be authenticated and authorized to update the job listing.",
+)
 def update_job(
     id: int,
     job: JobCreate,
@@ -79,16 +108,14 @@ def update_job(
     current_user: User = Depends(get_current_user_from_token),
 ):
     """
-    Update job function to modify an existing job entry in the database.
+    Internal API Documentation:
+    - Endpoint: PUT /update/{id}/
+    - Purpose: Update a specific job listing in the database.
+    - Auth Required: Yes, requires authentication and ownership or superuser status.
+    - Input: Job ID as path parameter and `JobCreate` model with new job details.
+    - Output: Confirmation message of successful update.
 
-    Parameters:
-        id (int): The unique identifier of the job to be updated.
-        job (JobCreate): The updated job data.
-        db (Session): The database session.
-        current_user (User): The current user making the update request.
-
-    Returns:
-        dict: A dictionary with a detail key indicating the success of the update operation.
+    Checks for the existence of the job, verifies ownership or superuser status, then updates the job in the database.
     """
     job_owner_id = current_user.id
     job_retrieved = retreive_job(id=id, db=db)
@@ -107,23 +134,26 @@ def update_job(
     return {"detail": "Successfully updated data."}
 
 
-@job_router.delete("/delete/{id}/", summary="Delete job")
+@job_router.delete(
+    "/delete/{id}/",
+    summary="Delete job",
+    description="Deletes a job listing by its ID. This action requires the user to be either the owner of the job listing or a superuser.",
+)
 def delete_job(
     id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user_from_token),
 ):
     """
-    Delete a job by its ID if the requesting user is the job owner or a superuser.
+    Internal API Documentation:
+    - Endpoint: DELETE /delete/{id}/
+    - Purpose: Remove a specific job listing from the database.
+    - Auth Required: Yes, requires ownership or superuser status.
+    - Input: Job ID as path parameter.
 
-    Parameters:
-        id (int): The ID of the job to delete.
-        db (Session): The database session.
-        current_user (User): The current user making the request.
-
-    Returns:
-        dict: A message indicating if the job was successfully deleted, or raises an HTTPException with a 404 or 401 status code.
+    Verifies job existence and ownership/superuser status before deleting the job from the database.
     """
+
     job = retreive_job(id=id, db=db)
     if not job:
         return HTTPException(

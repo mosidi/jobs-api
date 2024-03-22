@@ -48,7 +48,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          cd backend
+          cd jobs-api
           docker buildx create --use
           docker buildx inspect --bootstrap
           docker buildx build --platform linux/arm64 -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_BACKEND_IMAGE:latest --push .
@@ -56,7 +56,7 @@ jobs:
       - name: Deploy to ECS
         uses: imehedi/actions-awscli-v2@latest
         with:
-          args: ecs update-service --cluster AiVoiceAssistantCluster --service AiVoiceAssistantBackend --force-new-deployment
+          args: ecs update-service --cluster jobs-api --service obs-api-demo --force-new-deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -1,6 +1,7 @@
+from sqlalchemy.orm import Session
+
 from db.models.jobs import Job
 from schemas.jobs import JobCreate
-from sqlalchemy.orm import Session
 
 
 def retreive_job(id: int, db: Session):

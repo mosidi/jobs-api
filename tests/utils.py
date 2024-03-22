@@ -1,7 +1,8 @@
-from db.operations.users import create_new_user, get_user_by_email
 from fastapi.testclient import TestClient
-from schemas.users import UserCreate
 from sqlalchemy.orm import Session
+
+from db.operations.users import create_new_user, get_user_by_email
+from schemas.users import UserCreate
 
 
 def user_authentication_headers(

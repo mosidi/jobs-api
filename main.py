@@ -1,13 +1,15 @@
-from routing.base import api_router
+import os
+
+from fastapi import FastAPI
+from mangum import Mangum
+
 from core.config import settings
 from db.base import Base
 from db.session import engine
-from fastapi import FastAPI
-import os
+from routing.base import api_router
 
 # from webapps.base import webapp_router
 
-from mangum import Mangum
 
 
 def include_router(app):

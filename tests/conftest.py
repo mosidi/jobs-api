@@ -3,14 +3,15 @@ import sys
 from typing import Any, Generator
 
 import pytest
-from routing.base import api_router
-from core.config import settings
-from db.base import Base
-from db.session import get_db
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
+
+from core.config import settings
+from db.base import Base
+from db.session import get_db
+from routing.base import api_router
 from tests.utils import authentication_token_from_email
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

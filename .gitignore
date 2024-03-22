@@ -1,6 +1,5 @@
 __pycache__
+*.pyc
 .env
 env
-test_db.db
-print_tree.py
-sql_app.db
+*.db
