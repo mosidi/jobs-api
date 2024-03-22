@@ -8,9 +8,6 @@ from db.base import Base
 from db.session import engine
 from routing.base import api_router
 
-# from webapps.base import webapp_router
-
-
 
 def include_router(app):
     app.include_router(api_router, prefix="/v1")

@@ -8,6 +8,8 @@ api_router.include_router(route_users.users_router, prefix="/users", tags=["user
 api_router.include_router(route_jobs.job_router, prefix="/jobs", tags=["jobs"])
 api_router.include_router(route_login.login_router, prefix="/login", tags=["login"])
 
+api_router.include_router(route_login.login_router, tags=["login"])
+
 
 @api_router.get("/")
 async def read_main():

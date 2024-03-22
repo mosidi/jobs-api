@@ -21,6 +21,7 @@ class JobCreate(JobBase):
 
 
 class ShowJob(JobBase):
+    job_id: int
     job_title: str
     job_company: str
     job_company_url: Optional[str]
