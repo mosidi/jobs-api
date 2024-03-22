@@ -53,7 +53,7 @@ jobs:
       - name: Create archive of dependencies
         run: |
           cd ./venv/lib/python3.9/site-packages
-          zip -r9 ../../../../api.zip .
+          zip -r9 ../../../../jobs-api.zip .
       - name: Add API files to Zip file
         run: cd ./ && zip -g ../jobs-api.zip -r .
       - name: Upload zip file artifact
